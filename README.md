@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Legacy League of Legends Client - Profile Viewer
 
-## Getting Started
+![Project Preview](/public/images/league_logo.png)
 
-First, run the development server:
+A high-fidelity, interactive fan recreation of the **2016 Legacy League of Legends Client**. Built with modern web technologies, this project emulates the "classic" look and feel of the original client while integrating real-time data from the Riot Games API.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Authentic Login Experience**: Full video background, sound effects (unlocked on interaction), and authentic parchment-style UI.
+- **Real-Time Profile Lookup**: Connects to the Riot Games API to fetch live Summoner data, levels, and profile icons.
+- **Match History Viewer**: Deep integration to display recent match performance and champion statistics.
+- **Classic Home Screen**: Interactive news feed, video spotlights (YouTube integration), and a dynamic Ranked Match viewer.
+- **Legacy Tabs**: High-fidelity recreations of the Runes, Masteries, and Summoner Spells interfaces.
+- **Customization**: Toggleable music and animations directly from the login interface.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🛠️ Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Library**: React.js
+- **Styling**: Vanilla CSS Modules (for pixel-perfect accuracy)
+- **API**: Riot Games Developer API
 
-## Learn More
+## 🚀 Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+### Prerequisites
+- Node.js 18.x or later
+- A Riot Games Developer API Key (available at [Riot Developer Portal](https://developer.riotgames.com/))
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/fmniy/legacy-lol-client.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Set up Environment Variables:
+   Create a `.env.local` file and add your API key:
+   ```env
+   RIOT_API_KEY=your_api_key_here
+   ```
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## ⚖️ Legal Disclaimer
 
-## Deploy on Vercel
+**LEGAL JIBBER JABBER:** This project is not endorsed by Riot Games and does not reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends. League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This is a non-commercial, fan-made project created for educational and artistic purposes. No revenue is generated from this project, and it is intended as a tribute to the history of the League of Legends community.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Built with ❤️ by a fan of the Golden Era.*
