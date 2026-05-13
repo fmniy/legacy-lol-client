@@ -1456,7 +1456,7 @@ export default function ProfileScreen({ userData, onNavigate }) {
                           </div>
                         )}
                         <div className={styles.leagueNameContainer}>
-                          <div className={styles.leagueTierName}>{currentRank?.tier || 'Silver'}</div>
+                          <div className={styles.leagueTierName}>{currentRank?.tier ? currentRank.tier.charAt(0).toUpperCase() + currentRank.tier.slice(1).toLowerCase() : 'Silver'}</div>
                           <div className={styles.leagueFullName}>
                             {(currentRank?.tier?.toUpperCase() !== 'UNRANKED' && currentRank?.tier?.toUpperCase() !== 'PROVISIONAL') ? getLeagueName() : ''}
                           </div>

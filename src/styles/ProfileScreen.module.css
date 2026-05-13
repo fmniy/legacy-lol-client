@@ -1166,7 +1166,7 @@
 }
 
 .leagueTierName {
-  font-size: 13px;
+  font-size: 15px;
   color: #610c0c;
   font-weight: bold;
   margin-bottom: -4px;
@@ -1174,7 +1174,7 @@
 }
 
 .leagueFullName {
-  font-size: 19px;
+  font-size: 24px;
   color: #610c0c;
   font-family: var(--font-serif);
   letter-spacing: 0.5px;
@@ -1432,7 +1432,7 @@
   padding-top: 17px;
   height: 100%;
   margin-left: 25px;
-  margin-top: 0;
+  margin-top: 3px;
   overflow: hidden;
 }
 
@@ -1802,7 +1802,7 @@
 .championsTabWrapper {
   padding: 5px 10px;
   margin-left: -15px;
-  height: 450px;
+  height: 458px;
   display: flex;
   flex-direction: column;
 }
@@ -1813,7 +1813,7 @@
   gap: 25px;
   padding: 8px 0;
   margin-bottom: 5px;
-  margin-top: -10px;
+  margin-top: -7px;
 }
 
 .filterGroup {
