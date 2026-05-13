@@ -1,0 +1,214 @@
+.spellsContainer {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  gap: 10px;
+  min-height: 0;
+  user-select: none;
+}
+
+.sidebar {
+  width: 48%;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.spellsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px 10px;
+  justify-items: center;
+}
+
+.spellItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 70px;
+}
+
+.iconBorder {
+  width: 64px;
+  height: 64px;
+  background: #000;
+  border: 1px solid #333;
+  padding: 1px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+  transition: all 0.2s;
+}
+
+.spellIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Removed hover border color change */
+
+.spellItem.selected .iconBorder {
+  border-color: #f0e6d2;
+  box-shadow: 0 0 15px rgba(160, 140, 92, 0.6);
+  outline: 1px solid #f0e6d2;
+}
+
+.spellLabel {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #3b2f21;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.3);
+}
+
+.detailsArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 15px 10px 40px;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.topDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  height: 160px;
+}
+
+.headerInfo {
+  display: flex;
+  gap: 15px;
+  align-items: flex-start;
+}
+
+.bigIconBorder {
+  width: 56px;
+  height: 56px;
+  background: #000;
+  border: 1px solid #333;
+  padding: 1px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  flex-shrink: 0;
+  position: relative;
+}
+
+.bigSpellIcon {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: relative;
+  z-index: 2;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.bigSpellIconPrev {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  object-fit: cover;
+  z-index: 1;
+}
+
+.titleInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-top: 2px;
+}
+
+.spellName {
+  margin: 0;
+  font-size: 20px;
+  color: #000;
+  font-family: serif;
+  font-weight: 500;
+}
+
+.spellMeta {
+  font-size: 11px;
+  color: #000;
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.spellDescription {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #000;
+  font-weight: 500;
+  max-width: 95%;
+}
+
+.imageDetails {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 0;
+}
+
+.actionImageWrapper {
+  width: 410px;
+  height: 232px;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  box-shadow: none;
+  position: relative;
+  margin: 0 auto;
+}
+
+.actionImage {
+  width: 410px;
+  height: 232px;
+  display: block;
+  object-fit: contain;
+  border: none;
+  outline: none;
+  position: relative;
+  z-index: 2;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.actionImagePrev {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 410px;
+  height: 232px;
+  object-fit: contain;
+  z-index: 1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Scrollbar styling */
+.sidebar::-webkit-scrollbar,
+.detailsArea::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+.detailsArea::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+.detailsArea::-webkit-scrollbar-thumb {
+  background: #a08c5c;
+  border-radius: 3px;
+}

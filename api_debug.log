@@ -1,0 +1,4 @@
+[Profile API] Incoming Payload: {"riotId":"MakerLoL94#AURA","region":"LAS","puuid":"SJRlo8ss9vze8WX7KfNfIPH3cavHxWXmj8k94rvQxT1yOnh6lwdw1ZipX3KHKmPrdgd1RepkRPyjNw"}
+[Profile API] ERROR: Missing puuid or summonerId
+[Profile API] Incoming Payload: {"riotId":"MakerLoL94#AURA","region":"LAS","puuid":"SJRlo8ss9vze8WX7KfNfIPH3cavHxWXmj8k94rvQxT1yOnh6lwdw1ZipX3KHKmPrdgd1RepkRPyjNw"}
+[Profile API] ERROR: Missing puuid or summonerId

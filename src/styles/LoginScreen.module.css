@@ -1,0 +1,508 @@
+.container {
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  background-color: #000;
+}
+
+.videoBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transition: opacity 0.5s ease;
+}
+
+.videoBg.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.staticBg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.statusOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statusBox {
+  width: 480px;
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 20px;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 1);
+  color: #fff;
+}
+
+.statusTitle {
+  font-size: 18px;
+  font-family: serif;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.statusMessage {
+  font-size: 14px;
+  color: #ccc;
+  margin-bottom: 30px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+}
+
+.loadingBars {
+  display: flex;
+  gap: 4px;
+  align-items: flex-end;
+}
+
+.bar {
+  width: 6px;
+  background: #fff;
+  animation: barGrow 1s ease-in-out infinite;
+}
+
+.bar:nth-child(1) {
+  height: 20px;
+  animation-delay: 0s;
+}
+
+.bar:nth-child(2) {
+  height: 14px;
+  animation-delay: 0.2s;
+}
+
+.bar:nth-child(3) {
+  height: 8px;
+  animation-delay: 0.4s;
+}
+
+@keyframes barGrow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.3);
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 40px 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* LOGO */
+.headerLogo {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.logoImage {
+  width: 280px;
+  filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+.fanProjectTag {
+  color: #c8aa6e;
+  font-size: 10px;
+  letter-spacing: 3px;
+  font-family: var(--font-sans);
+  margin-top: -5px;
+  opacity: 0.7;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* LOGIN BOX */
+.loginBox {
+  width: 400px;
+  background: rgba(6, 12, 22, 0.95);
+  border: 1px solid rgba(132, 143, 160, 0.2);
+  padding: 30px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+}
+
+.loginGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+  margin-top: 60px;
+}
+
+.title {
+  color: #fff;
+  font-size: 20px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  margin-bottom: 15px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.label {
+  display: block;
+  color: #eee;
+  font-size: 14px;
+  font-family: var(--font-serif);
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #333;
+  padding: 4px 10px;
+  color: #000;
+  font-size: 16px;
+  font-family: var(--font-serif);
+  outline: none;
+  height: 32px;
+}
+
+.input::placeholder {
+  color: #999;
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.select {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #333;
+  padding: 4px 10px;
+  color: #000;
+  font-size: 16px;
+  font-family: var(--font-serif);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  height: 32px;
+}
+
+.selectWrapper::after {
+  content: '▼';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #333;
+  font-size: 10px;
+  pointer-events: none;
+}
+
+.optionsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+/* Custom Checkbox */
+.checkboxContainer {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: var(--font-serif);
+  color: #eee;
+  user-select: none;
+}
+
+.checkboxContainer input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 16px;
+  width: 16px;
+  background-color: #555;
+  border: 1px solid #777;
+}
+
+.checkboxContainer input:checked~.checkmark {
+  background-color: #333;
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.checkboxContainer input:checked~.checkmark:after {
+  display: block;
+}
+
+.checkboxContainer .checkmark:after {
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.loginButton {
+  background: linear-gradient(to bottom, #777, #444);
+  border: 1px solid #333;
+  color: #999;
+  padding: 8px 24px;
+  font-size: 15px;
+  font-family: var(--font-serif);
+  font-weight: bold;
+  cursor: not-allowed;
+  border-radius: 2px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.loginButton.active {
+  background: linear-gradient(to bottom, #ff9900 0%, #e65c00 100%);
+  border: 1px solid #4a2a00;
+  color: #fffde0;
+  cursor: pointer;
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.loginButton.active:hover {
+  background: linear-gradient(to bottom, #ffac33, #ff7a00);
+  filter: brightness(1.05);
+  /* Removed glow effect as requested */
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.loginButton.active:active {
+  background: linear-gradient(to bottom, #9e5218, #e89132);
+  transform: translateY(1px);
+}
+
+.error {
+  color: #ff4d4d;
+  font-size: 11px;
+  margin-top: 10px;
+}
+
+.footerLinks {
+  margin-top: 30px;
+  font-size: 14px;
+  font-family: var(--font-serif);
+  color: #eee;
+  line-height: 2;
+}
+
+.footerLinks a {
+  color: #0099ff;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.footerLinks a:hover {
+  text-decoration: underline;
+}
+
+.freeText {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 16px;
+  color: #f0e6d2; /* Off-white */
+  font-family: var(--font-serif);
+  font-weight: 400;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.freePart {
+  color: #c8aa6e; /* LoL Gold */
+  font-weight: bold;
+}
+
+/* BOTTOM LEFT */
+.bottomLeft {
+  margin-top: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 30px;
+}
+
+.riotBrand {
+  display: flex;
+  align-items: flex-end;
+}
+
+.kofiLink {
+  display: flex;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.kofiLink:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+
+.riotLogoImage {
+  height: 36px;
+  width: auto;
+  filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+}
+
+.settingsGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.termsLink {
+  color: #12c1c7;
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.settingsCheckbox {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 24px;
+  cursor: pointer;
+  font-size: 12px;
+  color: #fff;
+  user-select: none;
+}
+
+.settingsCheckbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.smallCheckmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 14px;
+  width: 14px;
+  background-color: #333;
+  border: 1px solid #555;
+}
+
+.settingsCheckbox input:checked~.smallCheckmark {
+  background-color: #555;
+}
+
+.smallCheckmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+.settingsCheckbox input:checked~.smallCheckmark:after {
+  display: block;
+}
+
+.smallCheckmark:after {
+  left: 4px;
+  top: 1px;
+  width: 3px;
+  height: 7px;
+  border: solid white;
+  border-width: 0 1px 1px 0;
+  transform: rotate(45deg);
+}
+
+/* BOTTOM RIGHT */
+.bottomRight {
+  position: absolute;
+  bottom: 40px;
+  right: 60px;
+}
+
+.infoButton {
+  width: 24px;
+  height: 24px;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-family: serif;
+  font-style: italic;
+  cursor: pointer;
+}
+
+.infoButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
