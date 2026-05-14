@@ -42,7 +42,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [status, setStatus] = useState(''); // '', 'Authenticating', 'Waiting'
   const [themes, setThemes] = useState(DEFAULT_THEMES);
-  const [currentTheme, setCurrentTheme] = useState(DEFAULT_THEMES[0]);
+  const [currentTheme, setCurrentTheme] = useState(DEFAULT_THEMES.find(t => t.id === 'default'));
   const [showThemeSelector, setShowThemeSelector] = useState(false);
 
   useEffect(() => {
@@ -95,9 +95,9 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     if (savedThemeId) {
       const theme = randomizedThemes.find(t => t.id === savedThemeId);
       if (theme) setCurrentTheme(theme);
-      else setCurrentTheme(randomizedThemes[0]);
+      else setCurrentTheme(randomizedThemes.find(t => t.id === 'default'));
     } else {
-      setCurrentTheme(randomizedThemes[0]);
+      setCurrentTheme(randomizedThemes.find(t => t.id === 'default'));
     }
 
     return () => {
