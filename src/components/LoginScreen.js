@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import styles from '../styles/LoginScreen.module.css';
 
 const LOGIN_THEMES_RAW = [
-  { id: 'default', name: 'Season 6 Login Screen', date: 'Jan 21, 2016', video: '/videos/login_background.mp4', image: '/images/login_background.png' },
-  { id: 'starguardian2016', name: 'Star Guardian: Burning Bright', date: 'Oct 7, 2016', video: '/videos/star_guardian_2016.mp4', image: '/images/star_guardian_2016_background.png' },
-  { id: 'jinx', name: 'Jinx, the Loose Cannon', date: 'May 26, 2015', video: '/videos/jinx.mp4', image: '/images/jinx_background.png' },
-  { id: 'vi', name: 'Vi, the Piltover Enforcer', date: 'May 26, 2015', video: '/videos/vi.mp4', image: '/images/vi_background.png' },
-  { id: 'worlds2016', name: '2016 World Championship', date: 'Sep 29, 2016', video: '/videos/worlds2016.mp4', image: '/images/worlds2016_background.png' },
+  { id: 'default', name: 'Season 6 Login Screen', date: 'Jan 21, 2016', video: 'https://www.youtube.com/watch?v=lu0fUb0PGh4', image: '/images/login_background.png' },
+  { id: 'starguardian2016', name: 'Star Guardian: Burning Bright', date: 'Oct 7, 2016', video: 'https://www.youtube.com/watch?v=6kEZEvMYKQY', image: '/images/star_guardian_2016_background.png' },
+  { id: 'jinx', name: 'Jinx, the Loose Cannon', date: 'May 26, 2015', video: 'https://www.youtube.com/watch?v=JoHRzfKrdtk', image: '/images/jinx_background.png' },
+  { id: 'vi', name: 'Vi, the Piltover Enforcer', date: 'May 26, 2015', video: 'https://www.youtube.com/watch?v=18yK0G9hHts', image: '/images/vi_background.png' },
+  { id: 'worlds2016', name: '2016 World Championship', date: 'Sep 29, 2016', video: 'https://www.youtube.com/watch?v=ekXfarHm6Ao', image: '/images/worlds2016_background.png' },
 ];
 
 const DEFAULT_THEMES = LOGIN_THEMES_RAW.map(theme => {
@@ -38,6 +38,17 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
   const [themes, setThemes] = useState(DEFAULT_THEMES);
   const [currentTheme, setCurrentTheme] = useState(DEFAULT_THEMES.find(t => t.id === 'default'));
   const [showThemeSelector, setShowThemeSelector] = useState(false);
+  const [iframeReady, setIframeReady] = useState(false);
+  const ytPlayerRef = useRef(null);
+  const ytContainerRef = useRef(null);
+  const ytApiReady = useRef(false);
+  const pendingThemeId = useRef(null);
+  const disableMusicRef = useRef(disableMusic);
+  const audioUnlockedRef = useRef(audioUnlocked);
+
+  // Keep refs in sync with state so createYTPlayer always sees current values
+  useEffect(() => { disableMusicRef.current = disableMusic; }, [disableMusic]);
+  useEffect(() => { audioUnlockedRef.current = audioUnlocked; }, [audioUnlocked]);
 
   useEffect(() => {
     // 1. Force muted state and attempt play immediately (visuals only)
@@ -82,7 +93,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
       }
       return theme;
     }).sort((a, b) => new Date(a.date) - new Date(b.date));
-    
+
     setThemes(randomizedThemes);
 
     const savedThemeId = localStorage.getItem('loginTheme');
@@ -101,6 +112,95 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     };
   }, []); // Only run once on mount
 
+  // Load YouTube IFrame API once
+  useEffect(() => {
+    if (window.YT && window.YT.Player) {
+      ytApiReady.current = true;
+      return;
+    }
+    const tag = document.createElement('script');
+    tag.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = () => {
+      ytApiReady.current = true;
+      if (pendingThemeId.current) {
+        createYTPlayer(pendingThemeId.current);
+        pendingThemeId.current = null;
+      }
+    };
+  }, []);
+
+  const createYTPlayer = useCallback((videoId) => {
+    if (!ytContainerRef.current) return;
+    // Destroy previous player cleanly
+    if (ytPlayerRef.current) {
+      try { ytPlayerRef.current.destroy(); } catch (_) {}
+      ytPlayerRef.current = null;
+    }
+    // Clear the container and create a NEW child element for YT to replace.
+    // This keeps React's ownership of ytContainerRef intact — YT only
+    // replaces the inner child, not the React-managed wrapper.
+    ytContainerRef.current.innerHTML = '';
+    const playerEl = document.createElement('div');
+    ytContainerRef.current.appendChild(playerEl);
+
+    setIframeReady(false);
+    const shouldBeMuted = !audioUnlockedRef.current || disableMusicRef.current;
+    ytPlayerRef.current = new window.YT.Player(playerEl, {
+      width: '100%',
+      height: '100%',
+      videoId,
+      playerVars: {
+        autoplay: 1,
+        mute: shouldBeMuted ? 1 : 0,
+        loop: 1,
+        playlist: videoId,
+        controls: 0,
+        showinfo: 0,
+        disablekb: 1,
+        fs: 0,
+        modestbranding: 1,
+        iv_load_policy: 3,
+        rel: 0,
+        cc_load_policy: 0,
+      },
+      events: {
+        onStateChange: (e) => {
+          // 1 = PLAYING — video is actually running, safe to reveal
+          if (e.data === 1) setIframeReady(true);
+        },
+      },
+    });
+  }, []);
+
+  // Create/update player whenever the YouTube theme changes
+  useEffect(() => {
+    const videoId = getYoutubeId(currentTheme.video);
+    if (!videoId) return;
+    if (!ytApiReady.current) {
+      pendingThemeId.current = videoId;
+      return;
+    }
+    createYTPlayer(videoId);
+    // Cleanup: destroy the player before React unmounts the container
+    return () => {
+      if (ytPlayerRef.current) {
+        try { ytPlayerRef.current.destroy(); } catch (_) {}
+        ytPlayerRef.current = null;
+      }
+      if (ytContainerRef.current) ytContainerRef.current.innerHTML = '';
+    };
+  }, [currentTheme.id, createYTPlayer]);
+
+  // Sync mute/unmute with the YT player when settings change
+  useEffect(() => {
+    if (!ytPlayerRef.current) return;
+    try {
+      if (!audioUnlocked || disableMusic) ytPlayerRef.current.mute();
+      else ytPlayerRef.current.unMute();
+    } catch (_) {}
+  }, [disableMusic, audioUnlocked]);
+
   // Update video state based on settings AND audio unlock status
   useEffect(() => {
     if (videoRef.current) {
@@ -115,6 +215,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
   }, [disableMusic, audioUnlocked, currentTheme.id]);
 
   const handleThemeSelect = (theme) => {
+    setIframeReady(false);
     setCurrentTheme(theme);
     localStorage.setItem('loginTheme', theme.id);
     setShowThemeSelector(false);
@@ -201,15 +302,34 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         />
       )}
 
-      {/* YouTube Background */}
+      {/* YouTube Background — always mounted so audio persists when animations are disabled */}
       {currentTheme.video && currentTheme.video.includes('youtube.com') && (
-        <iframe
-          key={currentTheme.id + (audioUnlocked && !disableMusic ? '-unmuted' : '-muted')}
-          className={`${styles.videoBg} ${disableAnimations ? styles.hidden : ''} ${styles.youtubeIframe}`}
-          src={`https://www.youtube.com/embed/${getYoutubeId(currentTheme.video)}?autoplay=1&mute=${(!audioUnlocked || disableMusic) ? 1 : 0}&loop=1&playlist=${getYoutubeId(currentTheme.video)}&controls=0&showinfo=0&disablekb=1&fs=0&modestbranding=1`}
-          allow="autoplay"
-          frameBorder="0"
-        />
+        <>
+          {/* YT player mounts into this div; hidden visually when animations off */}
+          <div
+            ref={ytContainerRef}
+            className={`${styles.videoBg} ${styles.youtubeIframe}`}
+            style={{
+              pointerEvents: 'none',
+              position: 'absolute',
+              top: 0, left: 0,
+              width: '100%',
+              height: '100%',
+              visibility: disableAnimations ? 'hidden' : 'visible',
+            }}
+          />
+          {/* Cover image: always visible when animations off, fades out once playing when on */}
+          <img
+            src={currentTheme.image}
+            alt=""
+            className={styles.staticBg}
+            style={{
+              transition: disableAnimations ? 'none' : 'opacity 1.5s ease',
+              opacity: disableAnimations ? 1 : (iframeReady ? 0 : 1),
+              pointerEvents: 'none',
+            }}
+          />
+        </>
       )}
 
       {/* Overlay for atmosphere */}
@@ -242,8 +362,8 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
             </div>
             <div className={styles.themeGrid}>
               {themes.map(theme => (
-                <div 
-                  key={theme.id} 
+                <div
+                  key={theme.id}
                   className={`${styles.themeOption} ${currentTheme.id === theme.id ? styles.activeTheme : ''}`}
                   onClick={() => handleThemeSelect(theme)}
                 >
@@ -350,8 +470,8 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
             </a>
           </div>
           <div className={styles.settingsGroup}>
-            <a 
-              href="#" 
+            <a
+              href="#"
               className={styles.termsLink}
               onClick={(e) => {
                 e.preventDefault();
@@ -385,7 +505,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         <div className={styles.bottomRight}>
           <button className={styles.cogButton} onClick={() => setShowThemeSelector(true)}>
             <svg viewBox="0 0 24 24" className={styles.cogSvg}>
-              <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+              <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
             </svg>
           </button>
         </div>

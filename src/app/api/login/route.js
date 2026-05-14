@@ -4,7 +4,7 @@ const getRoutingValue = (region) => {
   const americas = ['NA', 'BR', 'LAN', 'LAS'];
   const asia = ['KR', 'JP'];
   const europe = ['EUW', 'EUNE', 'TR', 'RU'];
-  
+
   const upperRegion = region.toUpperCase();
   if (americas.includes(upperRegion)) return 'americas';
   if (asia.includes(upperRegion)) return 'asia';
@@ -55,12 +55,12 @@ export async function POST(request) {
       `https://${routingValue}.api.riotgames.com/riot/account/v1/accounts/by-riot-id/${encodeURIComponent(gameName)}/${encodeURIComponent(tagLine)}`,
       { headers: { 'X-Riot-Token': API_KEY } }
     );
-    
+
     if (accountRes.status === 404) {
       return NextResponse.json({ error: 'Summoner not found on this server. Check name and tag.' }, { status: 404 });
     }
     if (!accountRes.ok) throw new Error(`Riot API Error: ${accountRes.statusText}`);
-    
+
     const accountData = await accountRes.json();
     const puuid = accountData.puuid;
 
@@ -69,9 +69,9 @@ export async function POST(request) {
       `https://${platformRoutingValue}.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${puuid}`,
       { headers: { 'X-Riot-Token': API_KEY } }
     );
-    
+
     if (!summonerRes.ok) throw new Error('The username or server is incorrect.');
-    
+
     const summonerData = await summonerRes.json();
 
     return NextResponse.json({

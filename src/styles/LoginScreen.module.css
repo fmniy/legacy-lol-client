@@ -28,6 +28,12 @@
   transform: scale(1.2); /* Slightly scale to hide YouTube branding/edges */
 }
 
+/* Force the iframe YT API injects to fill the container */
+.youtubeIframe iframe {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 .staticBg {
   position: absolute;
   top: 0;
