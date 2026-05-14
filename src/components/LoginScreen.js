@@ -390,8 +390,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         <div className={styles.loginGroup}>
           {/* Top Left Logo */}
           <div className={styles.headerLogo}>
-            <Image src="/images/league_logo.png" alt="League of Legends" width={280} height={120} className={styles.logoImage} priority />
-            <div className={styles.fanProjectTag}>FAN PROJECT</div>
+            <Image src="/images/league_logo.png" alt="League of Legends" width={280} height={160} className={styles.logoImage} priority style={{ width: '280px', height: 'auto' }} />
           </div>
 
           {/* Mid Left Login Box */}
