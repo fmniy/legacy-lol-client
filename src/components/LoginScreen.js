@@ -5,13 +5,7 @@ import styles from '../styles/LoginScreen.module.css';
 
 const LOGIN_THEMES_RAW = [
   { id: 'default', name: 'Season 6 Login Screen', date: 'Jan 21, 2016', video: '/videos/login_background.mp4', image: '/images/login_background.png' },
-  { 
-    id: 'starguardian2016', 
-    variants: [
-      { name: 'Star Guardian: Burning Bright', date: 'Oct 7, 2016', video: '/videos/star_guardian_2016.mp4', image: '/images/star_guardian_2016_background.png' },
-      { name: 'Ignite (ft. Zedd) | Worlds 2016 - League of Legends', date: 'Sep 29, 2016', video: 'https://www.youtube.com/watch?v=Zasx9hjo4WY', image: '/images/div2_ignite.jpg' }
-    ]
-  },
+  { id: 'starguardian2016', name: 'Star Guardian: Burning Bright', date: 'Oct 7, 2016', video: '/videos/star_guardian_2016.mp4', image: '/images/star_guardian_2016_background.png' },
   { id: 'jinx', name: 'Jinx, the Loose Cannon', date: 'May 26, 2015', video: '/videos/jinx.mp4', image: '/images/jinx_background.png' },
   { id: 'vi', name: 'Vi, the Piltover Enforcer', date: 'May 26, 2015', video: '/videos/vi.mp4', image: '/images/vi_background.png' },
   { id: 'worlds2016', name: '2016 World Championship', date: 'Sep 29, 2016', video: '/videos/worlds2016.mp4', image: '/images/worlds2016_background.png' },
