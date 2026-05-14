@@ -3,6 +3,33 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from '../styles/LoginScreen.module.css';
 
+const LOGIN_THEMES_RAW = [
+  { id: 'default', name: 'Season 6 Login Screen', date: 'Jan 21, 2016', video: '/videos/login_background.mp4', image: '/images/login_background.png' },
+  { 
+    id: 'starguardian2016', 
+    variants: [
+      { name: 'Star Guardian: Burning Bright', date: 'Oct 7, 2016', video: '/videos/star_guardian_2016.mp4', image: '/images/star_guardian_2016_background.png' },
+      { name: 'Ignite (ft. Zedd) | Worlds 2016 - League of Legends', date: 'Sep 29, 2016', video: 'https://www.youtube.com/watch?v=Zasx9hjo4WY', image: '/images/div2_ignite.jpg' }
+    ]
+  },
+  { id: 'jinx', name: 'Jinx, the Loose Cannon', date: 'May 26, 2015', video: '/videos/jinx.mp4', image: '/images/jinx_background.png' },
+  { id: 'vi', name: 'Vi, the Piltover Enforcer', date: 'May 26, 2015', video: '/videos/vi.mp4', image: '/images/vi_background.png' },
+  { id: 'worlds2016', name: '2016 World Championship', date: 'Sep 29, 2016', video: '/videos/worlds2016.mp4', image: '/images/worlds2016_background.png' },
+];
+
+const DEFAULT_THEMES = LOGIN_THEMES_RAW.map(theme => {
+  if (theme.variants) {
+    return { ...theme.variants[0], id: theme.id }; // Pick first variant for initial state
+  }
+  return theme;
+}).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+const getYoutubeId = (url) => {
+  if (!url) return null;
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+  return match ? match[1] : null;
+};
+
 export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
   const videoRef = useRef(null);
   const [riotId, setRiotId] = useState('');
@@ -14,6 +41,9 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
   const [disableAnimations, setDisableAnimations] = useState(false);
   const [audioUnlocked, setAudioUnlocked] = useState(false);
   const [status, setStatus] = useState(''); // '', 'Authenticating', 'Waiting'
+  const [themes, setThemes] = useState(DEFAULT_THEMES);
+  const [currentTheme, setCurrentTheme] = useState(DEFAULT_THEMES[0]);
+  const [showThemeSelector, setShowThemeSelector] = useState(false);
 
   useEffect(() => {
     // 1. Force muted state and attempt play immediately (visuals only)
@@ -50,6 +80,26 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
       setRememberMe(true);
     }
 
+    // Randomize variants on client mount
+    const randomizedThemes = LOGIN_THEMES_RAW.map(theme => {
+      if (theme.variants) {
+        const randomVariant = theme.variants[Math.floor(Math.random() * theme.variants.length)];
+        return { ...randomVariant, id: theme.id };
+      }
+      return theme;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    setThemes(randomizedThemes);
+
+    const savedThemeId = localStorage.getItem('loginTheme');
+    if (savedThemeId) {
+      const theme = randomizedThemes.find(t => t.id === savedThemeId);
+      if (theme) setCurrentTheme(theme);
+      else setCurrentTheme(randomizedThemes[0]);
+    } else {
+      setCurrentTheme(randomizedThemes[0]);
+    }
+
     return () => {
       window.removeEventListener('click', unlockAudio);
       window.removeEventListener('keydown', unlockAudio);
@@ -68,7 +118,13 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         videoRef.current.play().catch(() => { });
       }
     }
-  }, [disableMusic, audioUnlocked]);
+  }, [disableMusic, audioUnlocked, currentTheme.id]);
+
+  const handleThemeSelect = (theme) => {
+    setCurrentTheme(theme);
+    localStorage.setItem('loginTheme', theme.id);
+    setShowThemeSelector(false);
+  };
 
   const isFormValid = riotId.trim() !== '' && region.trim() !== '';
 
@@ -128,25 +184,39 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
 
   return (
     <div className={styles.container}>
-      {/* Static Background Image (shown when animations are disabled) */}
-      {disableAnimations && (
+      {/* Static Background Image (shown when animations are disabled or no video available) */}
+      {(disableAnimations || !currentTheme.video) && (
         <img
-          src="/images/login_background.png"
+          src={currentTheme.image}
           alt=""
           className={styles.staticBg}
         />
       )}
 
-      {/* Video Background (always present for audio, hidden visually if animations disabled) */}
-      <video
-        ref={videoRef}
-        autoPlay={true}
-        muted={true}
-        loop
-        playsInline
-        className={`${styles.videoBg} ${disableAnimations ? styles.hidden : ''}`}
-        src="/videos/login_background.mp4"
-      />
+      {/* Local Video Background */}
+      {currentTheme.video && !currentTheme.video.includes('youtube.com') && (
+        <video
+          key={currentTheme.id}
+          ref={videoRef}
+          autoPlay={true}
+          muted={true}
+          loop
+          playsInline
+          className={`${styles.videoBg} ${disableAnimations ? styles.hidden : ''}`}
+          src={currentTheme.video}
+        />
+      )}
+
+      {/* YouTube Background */}
+      {currentTheme.video && currentTheme.video.includes('youtube.com') && (
+        <iframe
+          key={currentTheme.id + (audioUnlocked && !disableMusic ? '-unmuted' : '-muted')}
+          className={`${styles.videoBg} ${disableAnimations ? styles.hidden : ''} ${styles.youtubeIframe}`}
+          src={`https://www.youtube.com/embed/${getYoutubeId(currentTheme.video)}?autoplay=1&mute=${(!audioUnlocked || disableMusic) ? 1 : 0}&loop=1&playlist=${getYoutubeId(currentTheme.video)}&controls=0&showinfo=0&disablekb=1&fs=0&modestbranding=1`}
+          allow="autoplay"
+          frameBorder="0"
+        />
+      )}
 
       {/* Overlay for atmosphere */}
       <div className={styles.overlay} />
@@ -163,6 +233,33 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
                 <div className={styles.bar}></div>
                 <div className={styles.bar}></div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Theme Selector Modal */}
+      {showThemeSelector && (
+        <div className={styles.themeSelectorOverlay} onClick={() => setShowThemeSelector(false)}>
+          <div className={styles.themeSelectorBox} onClick={e => e.stopPropagation()}>
+            <div className={styles.themeSelectorHeader}>
+              <h3 className={styles.themeSelectorTitle}>Select Login Screen</h3>
+              <button className={styles.closeButton} onClick={() => setShowThemeSelector(false)}>X</button>
+            </div>
+            <div className={styles.themeGrid}>
+              {themes.map(theme => (
+                <div 
+                  key={theme.id} 
+                  className={`${styles.themeOption} ${currentTheme.id === theme.id ? styles.activeTheme : ''}`}
+                  onClick={() => handleThemeSelect(theme)}
+                >
+                  <img src={theme.image} alt={theme.name} className={styles.themeThumbnail} />
+                  <div className={styles.themeInfo}>
+                    <div className={styles.themeName}>{theme.name}</div>
+                    {theme.date && <div className={styles.themeDate}>{theme.date}</div>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -290,9 +387,13 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
           </div>
         </div>
 
-        {/* Bottom Right Info Button */}
+        {/* Bottom Right Controls */}
         <div className={styles.bottomRight}>
-          <button className={styles.infoButton}>i</button>
+          <button className={styles.cogButton} onClick={() => setShowThemeSelector(true)}>
+            <svg viewBox="0 0 24 24" className={styles.cogSvg}>
+              <path fill="currentColor" d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+            </svg>
+          </button>
         </div>
       </div>
     </div>

@@ -23,6 +23,11 @@
   pointer-events: none;
 }
 
+.youtubeIframe {
+  pointer-events: none;
+  transform: scale(1.2); /* Slightly scale to hide YouTube branding/edges */
+}
+
 .staticBg {
   position: absolute;
   top: 0;
@@ -485,24 +490,197 @@
   position: absolute;
   bottom: 40px;
   right: 60px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.infoButton {
-  width: 24px;
-  height: 24px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #fff;
-  border-radius: 50%;
+
+
+.cogButton {
+  background: linear-gradient(to bottom, #777, #444);
+  border: 1px solid #1a1a1a;
+  border-radius: 2px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
-  font-family: serif;
-  font-style: italic;
   cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0,0,0,0.5);
 }
 
-.infoButton:hover {
-  background: rgba(255, 255, 255, 0.2);
+.cogButton:hover {
+  background: linear-gradient(to bottom, #888, #555);
+}
+
+.cogButton:active {
+  background: linear-gradient(to bottom, #444, #777);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.cogSvg {
+  width: 18px;
+  height: 18px;
+  color: #e0e0e0;
+  filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.5));
+  transition: color 0.2s;
+}
+
+.cogButton:hover .cogSvg {
+  color: #fff;
+}
+
+/* Theme Selector Modal */
+.themeSelectorOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.themeSelectorBox {
+  width: 800px;
+  max-width: 90%;
+  background: rgba(6, 12, 22, 0.95);
+  border: 1px solid #785a28;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 1), inset 0 0 0 1px rgba(200, 170, 110, 0.2);
+  padding: 30px;
+  position: relative;
+}
+
+.themeSelectorHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(120, 90, 40, 0.5);
+}
+
+.themeSelectorTitle {
+  color: #f0e6d2;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  color: #c8aa6e;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.closeButton:hover {
+  color: #f0e6d2;
+}
+
+.themeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Scrollbar for theme grid */
+.themeGrid::-webkit-scrollbar {
+  width: 8px;
+}
+.themeGrid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+.themeGrid::-webkit-scrollbar-thumb {
+  background: #785a28;
+  border-radius: 4px;
+}
+
+.themeOption {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+
+.themeOption:hover {
+  border-color: #c8aa6e;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.activeTheme {
+  border-color: #f0e6d2;
+  box-shadow: 0 0 15px rgba(200, 170, 110, 0.5);
+}
+
+
+.themeThumbnail {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+  filter: brightness(0.8);
+  transition: filter 0.2s;
+}
+
+.themeOption:hover .themeThumbnail,
+.activeTheme .themeThumbnail {
+  filter: brightness(1.1);
+}
+
+.themeInfo {
+  padding: 10px 12px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.7));
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.themeName {
+  color: #a09b8c;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  text-align: center;
+  transition: color 0.2s;
+}
+
+.themeDate {
+  color: #777;
+  font-size: 10px;
+  text-align: center;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.themeOption:hover .themeName,
+.activeTheme .themeName {
+  color: #f0e6d2;
+}
+
+.themeOption:hover .themeDate,
+.activeTheme .themeDate {
+  color: #a09b8c;
 }
