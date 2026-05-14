@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import styles from '../styles/LoginScreen.module.css';
 
 const LOGIN_THEMES_RAW = [
@@ -281,10 +282,13 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     <div className={styles.container}>
       {/* Static Background Image (shown when animations are disabled or no video available) */}
       {(disableAnimations || !currentTheme.video) && (
-        <img
+        <Image
           src={currentTheme.image}
           alt=""
+          fill
+          style={{ objectFit: 'cover' }}
           className={styles.staticBg}
+          priority
         />
       )}
 
@@ -319,15 +323,18 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
             }}
           />
           {/* Cover image: always visible when animations off, fades out once playing when on */}
-          <img
+          <Image
             src={currentTheme.image}
             alt=""
-            className={styles.staticBg}
+            fill
             style={{
+              objectFit: 'cover',
               transition: disableAnimations ? 'none' : 'opacity 1.5s ease',
               opacity: disableAnimations ? 1 : (iframeReady ? 0 : 1),
               pointerEvents: 'none',
             }}
+            className={styles.staticBg}
+            priority
           />
         </>
       )}
@@ -367,7 +374,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
                   className={`${styles.themeOption} ${currentTheme.id === theme.id ? styles.activeTheme : ''}`}
                   onClick={() => handleThemeSelect(theme)}
                 >
-                  <img src={theme.image} alt={theme.name} className={styles.themeThumbnail} />
+                  <Image src={theme.image} alt={theme.name} width={200} height={120} className={styles.themeThumbnail} style={{ objectFit: 'cover', objectPosition: 'center 20%' }} />
                   <div className={styles.themeInfo}>
                     <div className={styles.themeName}>{theme.name}</div>
                     {theme.date && <div className={styles.themeDate}>{theme.date}</div>}
@@ -383,7 +390,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         <div className={styles.loginGroup}>
           {/* Top Left Logo */}
           <div className={styles.headerLogo}>
-            <img src="/images/league_logo.png" alt="League of Legends" className={styles.logoImage} />
+            <Image src="/images/league_logo.png" alt="League of Legends" width={280} height={120} className={styles.logoImage} priority />
             <div className={styles.fanProjectTag}>FAN PROJECT</div>
           </div>
 
@@ -466,7 +473,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         <div className={styles.bottomLeft}>
           <div className={styles.riotBrand}>
             <a href="https://ko-fi.com/Y8Y6OIYA1" target="_blank" rel="noopener noreferrer" className={styles.kofiLink}>
-              <img src="/images/kofi.png" alt="Ko-fi" className={styles.riotLogoImage} />
+              <Image src="/images/kofi.png" alt="Ko-fi" width={100} height={36} className={styles.riotLogoImage} />
             </a>
           </div>
           <div className={styles.settingsGroup}>
