@@ -10,6 +10,7 @@ const LOGIN_THEMES_RAW = [
   { id: 'jinx', name: 'Jinx, the Loose Cannon', date: 'May 26, 2015', video: 'https://www.youtube.com/watch?v=JoHRzfKrdtk', image: '/images/jinx_background.png' },
   { id: 'vi', name: 'Vi, the Piltover Enforcer', date: 'May 26, 2015', video: 'https://www.youtube.com/watch?v=18yK0G9hHts', image: '/images/vi_background.png' },
   { id: 'worlds2016', name: '2016 World Championship', date: 'Sep 29, 2016', video: 'https://www.youtube.com/watch?v=ekXfarHm6Ao', image: '/images/worlds2016_background.png' },
+  { id: 'lucian', name: 'Lucian, the Purifier', date: 'Aug 22, 2013', video: 'https://www.youtube.com/watch?v=qbMCmdSEoaA', image: '/images/lucian.png' },
 ];
 
 const DEFAULT_THEMES = LOGIN_THEMES_RAW.map(theme => {
@@ -320,6 +321,18 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
               width: '100%',
               height: '100%',
               visibility: disableAnimations ? 'hidden' : 'visible',
+            }}
+          />
+          {/* Transparent click-blocker: sits above the YT iframe to prevent
+              the YouTube controls bar from appearing on hover or click */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 0, left: 0,
+              width: '100%',
+              height: '100%',
+              zIndex: 1,
+              background: 'transparent',
             }}
           />
           {/* Cover image: always visible when animations off, fades out once playing when on */}
