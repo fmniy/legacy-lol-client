@@ -28,13 +28,16 @@
   /* Scale up even more and shift up so YouTube's top and bottom controls are out of view */
 }
 
-/* Force the iframe YT API injects to fill the container */
+/* Force the iframe YT API injects to fill the container like object-fit: cover */
 .youtubeIframe iframe {
-  width: 100% !important;
-  height: calc(100% + 160px) !important;
+  width: 100vw !important;
+  height: 56.25vw !important; /* 16:9 Aspect Ratio */
+  min-height: 100vh !important;
+  min-width: 177.77vh !important; /* 16:9 Aspect Ratio */
   position: absolute !important;
-  top: -80px !important;
-  left: 0 !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
   pointer-events: none !important;
 }
 
