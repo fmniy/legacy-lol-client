@@ -173,7 +173,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
           if (e.data === 1) {
             // YouTube's new 2026 UI flashes giant center controls for the first ~4 seconds.
             // Wait for them to disappear completely before revealing the iframe.
-            setTimeout(() => setIframeReady(true), 3500);
+            setTimeout(() => setIframeReady(true), 2800);
           }
           // 0 = ENDED — manually loop the video to avoid playlist UI buttons
           if (e.data === 0) {
