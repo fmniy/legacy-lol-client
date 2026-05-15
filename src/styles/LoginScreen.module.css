@@ -25,13 +25,17 @@
 
 .youtubeIframe {
   pointer-events: none;
-  transform: scale(1.2); /* Slightly scale to hide YouTube branding/edges */
+  /* Scale up even more and shift up so YouTube's top and bottom controls are out of view */
 }
 
 /* Force the iframe YT API injects to fill the container */
 .youtubeIframe iframe {
   width: 100% !important;
-  height: 100% !important;
+  height: calc(100% + 160px) !important;
+  position: absolute !important;
+  top: -80px !important;
+  left: 0 !important;
+  pointer-events: none !important;
 }
 
 .staticBg {

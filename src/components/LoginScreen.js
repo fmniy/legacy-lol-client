@@ -136,7 +136,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     if (!ytContainerRef.current) return;
     // Destroy previous player cleanly
     if (ytPlayerRef.current) {
-      try { ytPlayerRef.current.destroy(); } catch (_) {}
+      try { ytPlayerRef.current.destroy(); } catch (_) { }
       ytPlayerRef.current = null;
     }
     // Clear the container and create a NEW child element for YT to replace.
@@ -153,10 +153,8 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
       height: '100%',
       videoId,
       playerVars: {
-        autoplay: 1,
+        autoplay: 0,
         mute: shouldBeMuted ? 1 : 0,
-        loop: 1,
-        playlist: videoId,
         controls: 0,
         showinfo: 0,
         disablekb: 1,
@@ -167,9 +165,21 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         cc_load_policy: 0,
       },
       events: {
+        onReady: (e) => {
+          e.target.playVideo();
+        },
         onStateChange: (e) => {
-          // 1 = PLAYING — video is actually running, safe to reveal
-          if (e.data === 1) setIframeReady(true);
+          // 1 = PLAYING — video is actually running
+          if (e.data === 1) {
+            // YouTube's new 2026 UI flashes giant center controls for the first ~2 seconds.
+            // Wait for them to disappear before revealing the iframe.
+            setTimeout(() => setIframeReady(true), 2500);
+          }
+          // 0 = ENDED — manually loop the video to avoid playlist UI buttons
+          if (e.data === 0) {
+            e.target.seekTo(0);
+            e.target.playVideo();
+          }
         },
       },
     });
@@ -187,7 +197,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     // Cleanup: destroy the player before React unmounts the container
     return () => {
       if (ytPlayerRef.current) {
-        try { ytPlayerRef.current.destroy(); } catch (_) {}
+        try { ytPlayerRef.current.destroy(); } catch (_) { }
         ytPlayerRef.current = null;
       }
       if (ytContainerRef.current) ytContainerRef.current.innerHTML = '';
@@ -200,7 +210,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
     try {
       if (!audioUnlocked || disableMusic) ytPlayerRef.current.mute();
       else ytPlayerRef.current.unMute();
-    } catch (_) {}
+    } catch (_) { }
   }, [disableMusic, audioUnlocked]);
 
   // Update video state based on settings AND audio unlock status
@@ -508,15 +518,7 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
               <span className={styles.smallCheckmark}></span>
               Disable Login Music
             </label>
-            <label className={styles.settingsCheckbox}>
-              <input
-                type="checkbox"
-                checked={disableAnimations}
-                onChange={(e) => setDisableAnimations(e.target.checked)}
-              />
-              <span className={styles.smallCheckmark}></span>
-              Disable Menu Animations
-            </label>
+
           </div>
         </div>
 
