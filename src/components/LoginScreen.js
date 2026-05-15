@@ -171,9 +171,9 @@ export default function LoginScreen({ onLoginSuccess, onShowTerms }) {
         onStateChange: (e) => {
           // 1 = PLAYING — video is actually running
           if (e.data === 1) {
-            // YouTube's new 2026 UI flashes giant center controls for the first ~2 seconds.
-            // Wait for them to disappear before revealing the iframe.
-            setTimeout(() => setIframeReady(true), 2500);
+            // YouTube's new 2026 UI flashes giant center controls for the first ~4 seconds.
+            // Wait for them to disappear completely before revealing the iframe.
+            setTimeout(() => setIframeReady(true), 4500);
           }
           // 0 = ENDED — manually loop the video to avoid playlist UI buttons
           if (e.data === 0) {
